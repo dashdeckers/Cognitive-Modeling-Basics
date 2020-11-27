@@ -1,5 +1,5 @@
-from model import Model
-from dmchunk import Chunk
+from ACTR.model import Model
+from ACTR.dmchunk import Chunk
 
 
 numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six']
@@ -104,6 +104,10 @@ def add(m, num1, num2):
     print(m.goal.slots['sum'])
 
 
-if __name__ == '__main__':
+def main():
     m = init_model()
     add(m, 'two', 'four')
+
+
+if __name__ == '__main__':
+    main()

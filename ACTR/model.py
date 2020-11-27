@@ -1,4 +1,4 @@
-from dmchunk import Chunk
+from ACTR.dmchunk import Chunk
 import math
 import random
 
@@ -14,7 +14,7 @@ class Model(object):
 
     lf = 0.1 # latency factor (:lf; default: 0.1)
     le = 1.0 # latency exponent (:le; default: 1.0)
-    
+
     rt = -1.0 # retrieval threshold (:rt; default: 0.0)
 
     mp = 3.0 # mismatch penalty (:mp)
@@ -48,7 +48,7 @@ class Model(object):
         if chunk.name not in [chunk.name for chunk in self.dm]:
             self.dm.append(chunk)
             update_fan = True
-        
+
         # If a chunk by this name does exist, ensure that it has the same slots and slot values
         chunk_idx = [i for i, j in enumerate(self.dm) if j.name == chunk.name][0]
         if self.dm[chunk_idx].slots != chunk.slots:
@@ -64,7 +64,7 @@ class Model(object):
             if type(v) == str and v not in [ch.name for ch in self.dm]:  # NT: we want some contraints on the adding of chunks
                 s = Chunk(name = v, slots = {})
                 self.add_encounter(s)
-        
+
         # Increment the fan of all chunks that this chunk references in its slots
         if update_fan:
             refs = [i for i, ref in enumerate(self.dm) if ref.name in slot_vals]
@@ -89,7 +89,7 @@ class Model(object):
         spreading_activation = self.get_spreading_activation_from_goal(chunk)
 
         return baselevel_activation + spreading_activation
-    
+
 
     def get_activation(self, chunk):
         """
@@ -130,7 +130,7 @@ class Model(object):
                 ch1 = self.get_chunk(value)
                 if ch1 != None and value in chunk.slots.values() and ch1.fan > 0:
                     spreading += max(0, self.mas - math.log(ch1.fan))
-        
+
         if total_slots == 0:
             return 0
 
@@ -164,7 +164,7 @@ class Model(object):
         else:
             latency = self.lf * math.exp(-self.le * bestActivation) # calculate it here to avoid a new noise draw
         return bestMatch, latency
-    
+
     def mismatch(self, value1, value2):
         """
         Calculate the mismatch between two slot values. If the two values are the same, the mismatch is 0.
@@ -174,7 +174,7 @@ class Model(object):
             return 0.0
         if type(value1) == str or type(value2) == str:
             return None
-        return -math.sqrt(abs(float(value1) - float(value2)))/5 
+        return -math.sqrt(abs(float(value1) - float(value2)))/5
 
     def partial_match(self, chunk, pattern):
         """
@@ -189,8 +189,8 @@ class Model(object):
                 return None
             penalty += similarity * self.mp
         return penalty
-            
-    
+
+
     def retrieve_partial(self, chunk, trace=False):
         """
         Retrieve a chunk using partial matching. This version only partially matches on numbers, and will
@@ -201,7 +201,7 @@ class Model(object):
         for ch in self.dm:
             act = self.get_activation(ch)
             penalty = self.partial_match(ch, chunk)
-          
+
             if penalty != None and act + penalty > bestActivation:
                 bestMatch = ch
                 bestActivation = act + penalty
@@ -211,7 +211,7 @@ class Model(object):
             latency = self.lf * math.exp(-self.le * self.rt)
         else:
             latency = self.lf * math.exp(-self.le * bestActivation) # calculate it here to avoid a new noise draw
-        return bestMatch, latency        
+        return bestMatch, latency
 
 
     def get_retrieval_probability(self, chunk, pattern):
@@ -231,7 +231,7 @@ class Model(object):
         latency = self.lf * math.exp(-self.le * self.rt) # Latency is determined by the retrieval threshold
 
         eligible_chunks = [ch for ch in self.dm if self.match(ch, pattern) and slot in ch.slots and ch.slots[slot]]
-        
+
         if not eligible_chunks:
             return None, latency
 
