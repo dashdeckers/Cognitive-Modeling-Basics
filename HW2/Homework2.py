@@ -218,7 +218,7 @@ def main(
     simulated_data.to_csv(Path() / 'HW2' / 'model_data.csv', index=False)
 
     # load the original data, and plot both to compare
-    original_data = pd.read_csv(Path() / 'HW2' / "HW2-dataJS.csv")
+    original_data = pd.read_csv(Path() / "dataJS.csv")
     plot(original_data)
     plot(simulated_data)
 
