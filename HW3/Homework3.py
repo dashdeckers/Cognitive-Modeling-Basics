@@ -4,6 +4,7 @@ from typing import List
 import sys; sys.path.append(Path().resolve().parent.as_posix())  # noqa
 
 from ACTR.model import Model
+from ACTR.dmchunk import Chunk
 from ACTR.plot import plot
 
 import pandas as pd
@@ -89,17 +90,33 @@ def do_trial(
     # "followed by the presentation of a warning stimulus ..."
     # "After a variable delay ranging from 0.25-0.85s drawn randomly from a
     # truncated exponential distribution, ..."
-    subj.time += truncexpon(0.6, 0.25).rvs(1, random_state=rng)
+    subj.time += truncexpon(0.6, 0.25).rvs(1, random_state=rng)[0]
     # "two 100ms flashes separated by the sample interval were presented."
     subj.time += 0.1  # READY
     subj.time += sample_interval
+
+    # convert time to pulses and remember how many it took
+    pulses = time_to_pulses(sample_interval)
+    subj.add_encounter(Chunk(
+        name=f'pf_{pulses}',
+        slots={'isa': 'pulse-fact', 'pulses': pulses}
+    ))
+
     # "Production times, t_p, were measured from the center of the flash, (that
     # is, 50ms after its onset) to when the key was pressed"
     subj.time += 0.05  # SET
 
-    # implement cognitive model here
-    production_time = sample_interval
+    # retrieve the most activated memory
+    request = Chunk(
+        name='pulse-request',
+        slots={'isa': 'pulse-fact'}
+    )
+    chunk, latency = subj.retrieve(request)
+    subj.add_encounter(chunk)
+    subj.time += latency
 
+    # convert pulse to time, then add and return the production time
+    production_time = pulses_to_time(chunk.slots['pulses'])
     subj.time += production_time  # GO
     return production_time
 
@@ -161,16 +178,17 @@ def do_experiment(
                     condition,
                     row_idx + 1,
                     trial_idx,
-                    sample_interval,
-                    production_time,
+                    # the plotting code expects (ms) units for some reason
+                    # else the jitter is all over the place
+                    sample_interval * 1000,
+                    production_time * 1000,
                     n_train_trials + n_test_trials,
                     False if trial_idx <= n_train_trials else True
                 ]
                 row_idx += 1
 
-                # Reset declarative memory
-
-            # Add one day delay after each block of trials
+            # reset declarative memory by re-initializing the subject
+            subj = init_model(subj.id)
 
     return data
 
@@ -180,14 +198,10 @@ def main(
             n_train_trials: int = 500,
             n_test_trials: int = 1000
         ) -> None:
-    # create the participants, do the experiment and record the data
-    participants = [init_model(id) for id in range(n_participants)]
+    # create the participants, do the experiment and record the data. then plot
+    participants = [init_model(sid) for sid in range(n_participants)]
     simulated_data = do_experiment(participants, n_test_trials, n_train_trials)
-    simulated_data.to_csv(Path() / 'HW3' / 'model_data.csv', index=False)
-
-    # load the original data, and plot both to compare
-    original_data = pd.read_csv(Path() / "dataJS.csv")
-    plot(rng, original_data)
+    # simulated_data.to_csv(Path() / 'HW3' / 'model_data.csv', index=False)
     plot(rng, simulated_data)
 
 
