@@ -1,6 +1,2 @@
-from HW5 import Homework5
-
-import matplotlib.pyplot as plt
-import pandas as pd
-
-data = Homework5.main()
+from HW5.Homework5 import main
+main()
