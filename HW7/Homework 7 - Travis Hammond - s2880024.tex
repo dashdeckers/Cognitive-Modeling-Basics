@@ -1,0 +1,33 @@
+\documentclass{article}
+
+\title{Final Project Part 3: Interpretation \& Discussion}
+\author{Travis Hammond - s2880024}
+
+\begin{document}
+\maketitle
+
+
+\section{Summary of your approach and findings in the first two assignments}
+
+We have developed an ACT-R model that performs the experiments detailed in the Acerbi et al. (2012) paper, in particular the first two experiments in which subjects are asked to reproduce timing intervals from two different interval distributions. Experiment 1 compared two Uniform distributions with different interval ranges (one was slightly longer than the other), and experiment 2 compared a Uniform distribution to a peaked one with the same interval range but in which one interval had a much higher probability of being sampled.
+
+We found that the ACT-R model in many qualitative ways performed similarly to the Bayesian model detailed in the paper, but there were also some differences. In experiment 1, both plots showed the same general trend for the response bias with a consistent and symmetric bias towards the means of the respective distributions. Our ACT-R response bias curves were closer together, not as clearly separated on the x-axis as the plots in the paper, but the qualitative similarities are evident. Experiment 2 also showed the same trends in response bias, with the peaked interval curves shifted downwards towards the distribution mean as expected. The standard deviations for both experiments either differed qualitatively or showed too much variance to be sure, but this can easily be a symptom of the more explicit ACT-R model implementation because a Bayesian (mathematical!) model abstracts away from possibly noisy implementation details.
+
+The modeling of the prior also showed some qualitative similarities, but ultimately the shape of the declarative memory based prior was more smooth, resembling an upside-down parabola, while the Baysian estimated prior was shaped like a multi-modal or mixture of Gaussians. This is likely due to our direct access to the prior / DM while the Bayesian approach required sampling and estimation.
+
+
+\section{Implications of your findings for the various modelling paradigms}
+
+Mathematical models of cognition like Bayesian models are clean and easy to reason about, but they abstract away from many of the details of cognition and as a result (but also inherently, due to their abstract mathematical nature) are less complete models of cognition. They don't capture the full picture because they simplify / reduce a very complex dynamical system to a few equations. Just like modeling a car in terms of velocity and other physical equations does not tell us much about how to build the engine, a Bayesian model of time estimation does not tell us how exactly time is estimated in the brain.
+
+Programmed cognitive models like ACT-R are closer to the details than mathematical models. They have to be explicit in things like how and when exactly memories are created and retrieved, and as such they make for better models in the sense that they come with a better understanding of the underlying cognitive mechanisms. However, they are still hindered by the underlying representation assumption of the classic imperative programming style (symbolic manipulation!) on a binary computer. Our declarative memory approach to timing estimation gave us a glimpse of how the mechanisms could look like.
+
+Neural network models are in my opinion the best way to go, because they are at their core closest to the underlying mechanisms from which the phenomena we are trying to understand and model emerge from. That they are better models of cognition and specifically human timing estimation is evident in the fact that they can implicitly represent time perception without having to increment time counters. This implicit representation could bring us even closer to the truth.
+
+
+\section{What our findings mean for our understanding of timing and the influence of memory on timing}
+
+At the end of the day, all levels of abstraction and all approaches to modelling cognition give us some piece of the puzzle and so they are all valuable. We believe that there is at an abstract level a Bayesian mechanism, at a more detailed level the prior is represented by the state of the declarative memory, and at the most detailed level the neuronal mechanisms explain how time itself is represented in the brain implicitly.
+
+
+\end{document}

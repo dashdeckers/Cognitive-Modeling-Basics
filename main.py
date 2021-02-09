@@ -1,2 +1,2 @@
-from HW5.Homework5 import main
-main()
+from HW6.Homework6 import main
+result = main()
